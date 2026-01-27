@@ -1,4 +1,4 @@
-# SmartShop - College Mess E-commerce App
+# SmartShop - College Mess E-commerce
 
 SmartShop is a comprehensive college mess e-commerce application designed to digitize and simplify the way students purchase and manage mess services. It bridges the gap between students and the mess committee by offering a transparent, efficient, and user-friendly platform for meal subscriptions, menu tracking, and feedback.
 
