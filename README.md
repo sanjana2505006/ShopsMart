@@ -64,4 +64,4 @@ As per project guidelines, the following technologies are used:
     *   Start the server and client development servers.
 
 ---
-*SmartShop transforms the traditional mess system into a modern, service-based e-commerce platform.*
+
