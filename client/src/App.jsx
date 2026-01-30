@@ -1,36 +1,49 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react';
+import Navbar from './components/Navbar';
+import Login from './pages/Login';
+import StudentDashboard from './pages/StudentDashboard';
+import MenuBoard from './pages/MenuBoard';
 
 function App() {
-    const [data, setData] = useState(null);
+    const [currentPage, setCurrentPage] = useState('login');
+    const [user, setUser] = useState(null);
 
-    useEffect(() => {
-        const apiUrl = import.meta.env.VITE_API_URL || '';
-        fetch(`${apiUrl}/api/health`)
-            .then(res => res.json())
-            .then(data => setData(data))
-            .catch(err => console.error('Error fetching health check:', err));
-    }, []);
+    const handleLogin = (userData) => {
+        setUser(userData);
+        setCurrentPage('dashboard');
+    };
+
+    const handleNavigate = (page) => {
+        if (page === 'login' && user) {
+            // Logout
+            setUser(null);
+            setCurrentPage('login');
+        } else {
+            setCurrentPage(page);
+        }
+    };
+
+    const renderPage = () => {
+        switch (currentPage) {
+            case 'login':
+                return <Login onLogin={handleLogin} />;
+            case 'dashboard':
+                return user ? <StudentDashboard /> : <Login onLogin={handleLogin} />;
+            case 'menu':
+                return <MenuBoard />;
+            default:
+                return <Login onLogin={handleLogin} />;
+        }
+    };
 
     return (
-        <div className="container">
-            <h1>ShopSmart</h1>
-            <div className="card">
-                <h2>Backend Status</h2>
-                {data ? (
-                    <div>
-                        <p>Status: <span className="status-ok">{data.status}</span></p>
-                        <p>Message: {data.message}</p>
-                        <p>Timestamp: {data.timestamp}</p>
-                    </div>
-                ) : (
-                    <p>Loading backend status...</p>
-                )}
-            </div>
-            <p className="hint">
-                Edit <code>src/App.jsx</code> and save to test HMR
-            </p>
+        <div>
+            <Navbar onNavigate={handleNavigate} currentPage={currentPage} user={user} />
+            <main>
+                {renderPage()}
+            </main>
         </div>
-    )
+    );
 }
 
-export default App
+export default App;
