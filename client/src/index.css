@@ -299,3 +299,14 @@ a {
   border-color: var(--primary);
   box-shadow: 0 0 0 4px var(--primary-light);
 }
+
+/* Spinner animation for login button */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Smooth card hover lift */
+.plan-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
