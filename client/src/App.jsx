@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
 import MenuBoard from './pages/MenuBoard';
 import AdminPanel from './pages/AdminPanel';
+import { apiFetch } from './lib/api';
 
 const mealPlans = [
     {
@@ -141,7 +142,7 @@ function App() {
 
             try {
                 const parsedAuth = JSON.parse(savedAuth);
-                const response = await fetch('/api/auth/me', {
+                const response = await apiFetch('/api/auth/me', {
                     headers: {
                         Authorization: `Bearer ${parsedAuth.token}`,
                     },
@@ -151,10 +152,9 @@ function App() {
                     throw new Error('Session expired');
                 }
 
-                const data = await response.json();
                 setAuthToken(parsedAuth.token);
-                setUser(data.user);
-                setCurrentPage(data.user.role === 'admin' ? 'admin' : 'dashboard');
+                setUser(response.data.user);
+                setCurrentPage(response.data.user.role === 'admin' ? 'admin' : 'dashboard');
             } catch (error) {
                 window.localStorage.removeItem(AUTH_STORAGE_KEY);
             } finally {

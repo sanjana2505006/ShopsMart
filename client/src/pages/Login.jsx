@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiFetch } from '../lib/api';
 
 const demoAccounts = [
     { label: 'Student Demo', email: 'riya@college.edu', password: 'smartshop123', role: 'student', mode: 'login' },
@@ -35,7 +36,7 @@ function Login({ onAuthSuccess }) {
 
         try {
             setIsSubmitting(true);
-            const response = await fetch(`/api/auth/${mode === 'login' ? 'login' : 'signup'}`, {
+            const response = await apiFetch(`/api/auth/${mode === 'login' ? 'login' : 'signup'}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,14 +49,12 @@ function Login({ onAuthSuccess }) {
                 }),
             });
 
-            const data = await response.json();
-
             if (!response.ok) {
-                throw new Error(data.message || 'Unable to continue.');
+                throw new Error(response.data?.message || 'Unable to continue.');
             }
 
             setMessage(mode === 'signup' ? 'Account created. Welcome to SmartShop.' : 'Signed in successfully.');
-            onAuthSuccess(data);
+            onAuthSuccess(response.data);
         } catch (submitError) {
             setError(submitError.message);
         } finally {
@@ -146,6 +145,7 @@ function Login({ onAuthSuccess }) {
                                     value={form.name}
                                     onChange={(event) => updateField('name', event.target.value)}
                                     placeholder="Your full name"
+                                    autoComplete="name"
                                 />
                             </label>
                         ) : null}
@@ -157,6 +157,7 @@ function Login({ onAuthSuccess }) {
                                 value={form.email}
                                 onChange={(event) => updateField('email', event.target.value)}
                                 placeholder="name@college.edu"
+                                autoComplete="email"
                             />
                         </label>
 
@@ -167,6 +168,7 @@ function Login({ onAuthSuccess }) {
                                 value={form.password}
                                 onChange={(event) => updateField('password', event.target.value)}
                                 placeholder={mode === 'signup' ? 'Use at least 8 characters' : 'Enter your password'}
+                                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                             />
                         </label>
 
