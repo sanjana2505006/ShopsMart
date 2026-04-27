@@ -1,6 +1,10 @@
 const configuredApiUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
 
 function getDefaultApiUrl() {
+    if (import.meta.env.DEV) {
+        return '';
+    }
+
     if (typeof window === 'undefined') {
         return 'http://localhost:5001';
     }
@@ -21,13 +25,31 @@ export function apiUrl(path) {
 }
 
 export async function apiFetch(path, options = {}) {
-    const response = await fetch(apiUrl(path), {
-        ...options,
-        headers: {
-            Accept: 'application/json',
-            ...(options.headers || {}),
-        },
-    });
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 10000);
+
+    let response;
+
+    try {
+        response = await fetch(apiUrl(path), {
+            ...options,
+            signal: options.signal || controller.signal,
+            headers: {
+                Accept: 'application/json',
+                ...(options.headers || {}),
+            },
+        });
+    } catch (error) {
+        window.clearTimeout(timeoutId);
+
+        if (error.name === 'AbortError') {
+            throw new Error('Request timed out. Check that the backend is running on port 5001.');
+        }
+
+        throw new Error('Unable to reach the SmartShop server.');
+    }
+
+    window.clearTimeout(timeoutId);
 
     const contentType = response.headers.get('content-type') || '';
     const rawBody = await response.text();
