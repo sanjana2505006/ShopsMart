@@ -1,85 +1,149 @@
-import React from 'react';
-
-function StudentDashboard() {
+function StudentDashboard({
+    user,
+    mealPlans,
+    stats,
+    bookings,
+    orders,
+    notifications,
+    onBuyPlan,
+    onToggleBooking,
+    onNavigate,
+}) {
     return (
-        <div style={styles.container}>
-            <div style={styles.content}>
-                <h2 style={styles.title}>Student Dashboard</h2>
-                <div style={styles.grid}>
-                    <div style={styles.card}>
-                        <h3 style={styles.cardTitle}>Meal Balance</h3>
-                        <p style={styles.cardValue}>$125.50</p>
+        <section className="page page-dashboard">
+            <div className="container stack-lg">
+                <section className="hero hero-dashboard">
+                    <div className="hero-copy">
+                        <p className="eyebrow">Student Dashboard</p>
+                        <h1>Welcome back, {user?.name}.</h1>
+                        <p className="hero-text">
+                            Your plan is active, tomorrow&apos;s meals are open for confirmation, and the mess committee just pushed a fresh menu update.
+                        </p>
+                        <div className="hero-actions">
+                            <button className="button button-primary" onClick={() => onNavigate('menu')}>
+                                Explore Today&apos;s Menu
+                            </button>
+                            <button className="button button-secondary" onClick={() => onNavigate('admin')}>
+                                View Committee Insights
+                            </button>
+                        </div>
                     </div>
-                    <div style={styles.card}>
-                        <h3 style={styles.cardTitle}>Meals This Week</h3>
-                        <p style={styles.cardValue}>12</p>
+                    <div className="hero-sidecard">
+                        <span className="mini-label">Subscription Status</span>
+                        <strong>Monthly Non-Veg</strong>
+                        <p>18 meals left, next renewal on May 2, payment auto-reminder enabled.</p>
                     </div>
-                    <div style={styles.card}>
-                        <h3 style={styles.cardTitle}>Favorite Item</h3>
-                        <p style={styles.cardValue}>Pizza</p>
+                </section>
+
+                <section className="stats-grid">
+                    {stats.map((item) => (
+                        <article className="stat-card" key={item.label}>
+                            <span className="mini-label">{item.label}</span>
+                            <strong>{item.value}</strong>
+                            <p>{item.helper}</p>
+                        </article>
+                    ))}
+                </section>
+
+                <section className="dashboard-layout">
+                    <div className="stack-md">
+                        <section className="panel">
+                            <div className="section-heading">
+                                <div>
+                                    <p className="eyebrow">Meal Plans</p>
+                                    <h2>Choose your next subscription</h2>
+                                </div>
+                            </div>
+                            <div className="plan-grid">
+                                {mealPlans.map((plan) => (
+                                    <article className={`plan-card accent-${plan.accent}`} key={plan.id}>
+                                        <div className="plan-topline">
+                                            <span className="pill">{plan.duration}</span>
+                                            <span className="price-tag">Rs {plan.price}</span>
+                                        </div>
+                                        <h3>{plan.name}</h3>
+                                        <p>{plan.description}</p>
+                                        <div className="plan-footer">
+                                            <span>{plan.meals}</span>
+                                            <button className="button button-secondary" onClick={() => onBuyPlan(plan)}>
+                                                Buy Plan
+                                            </button>
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className="panel">
+                            <div className="section-heading">
+                                <div>
+                                    <p className="eyebrow">Bookings</p>
+                                    <h2>Tomorrow&apos;s meal opt-ins</h2>
+                                </div>
+                            </div>
+                            <div className="booking-list">
+                                {bookings.map((meal) => (
+                                    <article className="booking-card" key={meal.id}>
+                                        <div>
+                                            <strong>{meal.title}</strong>
+                                            <p>{meal.item}</p>
+                                            <span>{meal.time}</span>
+                                        </div>
+                                        <button
+                                            className={meal.booked ? 'toggle-button active' : 'toggle-button'}
+                                            onClick={() => onToggleBooking(meal.id)}
+                                        >
+                                            {meal.booked ? 'Booked' : 'Skip'}
+                                        </button>
+                                    </article>
+                                ))}
+                            </div>
+                        </section>
                     </div>
-                </div>
-                <div style={styles.section}>
-                    <h3 style={styles.sectionTitle}>Recent Orders</h3>
-                    <p style={styles.placeholder}>No recent orders</p>
-                </div>
+
+                    <div className="stack-md">
+                        <section className="panel">
+                            <div className="section-heading">
+                                <div>
+                                    <p className="eyebrow">Notifications</p>
+                                    <h2>Stay in sync</h2>
+                                </div>
+                            </div>
+                            <div className="notification-list">
+                                {notifications.map((item) => (
+                                    <article className={`notification-card tone-${item.tone}`} key={item.id}>
+                                        <strong>{item.title}</strong>
+                                        <p>{item.detail}</p>
+                                    </article>
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className="panel">
+                            <div className="section-heading">
+                                <div>
+                                    <p className="eyebrow">Transactions</p>
+                                    <h2>Recent orders</h2>
+                                </div>
+                            </div>
+                            <div className="table-list">
+                                {orders.slice(0, 5).map((order) => (
+                                    <div className="table-row" key={order.id}>
+                                        <div>
+                                            <strong>{order.item}</strong>
+                                            <p>{order.id}</p>
+                                        </div>
+                                        <span>Rs {order.amount}</span>
+                                        <span className="status-tag">{order.status}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+                </section>
             </div>
-        </div>
+        </section>
     );
 }
-
-const styles = {
-    container: {
-        backgroundColor: '#ecf0f1',
-        minHeight: 'calc(100vh - 80px)',
-        padding: '2rem',
-    },
-    content: {
-        maxWidth: '1200px',
-        margin: '0 auto',
-    },
-    title: {
-        color: '#2c3e50',
-        marginBottom: '2rem',
-    },
-    grid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '1.5rem',
-        marginBottom: '2rem',
-    },
-    card: {
-        backgroundColor: '#fff',
-        padding: '1.5rem',
-        borderRadius: '8px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    },
-    cardTitle: {
-        color: '#7f8c8d',
-        fontSize: '0.9rem',
-        fontWeight: '500',
-        marginBottom: '0.5rem',
-    },
-    cardValue: {
-        color: '#2c3e50',
-        fontSize: '2rem',
-        fontWeight: 'bold',
-        margin: 0,
-    },
-    section: {
-        backgroundColor: '#fff',
-        padding: '1.5rem',
-        borderRadius: '8px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    },
-    sectionTitle: {
-        color: '#2c3e50',
-        marginBottom: '1rem',
-    },
-    placeholder: {
-        color: '#7f8c8d',
-        fontStyle: 'italic',
-    },
-};
 
 export default StudentDashboard;
