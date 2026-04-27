@@ -16,22 +16,26 @@ function StudentDashboard({
                     <div className="hero-copy">
                         <p className="eyebrow">Student Dashboard</p>
                         <h1>Welcome back, {user?.name}.</h1>
-                        <p className="hero-text">
-                            Your plan is active, tomorrow&apos;s meals are open for confirmation, and the mess committee just pushed a fresh menu update.
-                        </p>
+                        <p className="hero-text">Your plan is active and tomorrow&apos;s meals are ready to confirm.</p>
                         <div className="hero-actions">
                             <button className="button button-primary" onClick={() => onNavigate('menu')}>
                                 Explore Today&apos;s Menu
                             </button>
-                            <button className="button button-secondary" onClick={() => onNavigate('admin')}>
-                                View Committee Insights
-                            </button>
+                            {user?.role === 'admin' ? (
+                                <button className="button button-secondary" onClick={() => onNavigate('admin')}>
+                                    Open Admin Console
+                                </button>
+                            ) : (
+                                <button className="button button-secondary" onClick={() => onNavigate('dashboard')}>
+                                    Review Your Plan
+                                </button>
+                            )}
                         </div>
                     </div>
                     <div className="hero-sidecard">
                         <span className="mini-label">Subscription Status</span>
                         <strong>Monthly Non-Veg</strong>
-                        <p>18 meals left, next renewal on May 2, payment auto-reminder enabled.</p>
+                        <p>18 meals left. Renews on May 2.</p>
                     </div>
                 </section>
 
@@ -51,7 +55,7 @@ function StudentDashboard({
                             <div className="section-heading">
                                 <div>
                                     <p className="eyebrow">Meal Plans</p>
-                                    <h2>Choose your next subscription</h2>
+                                    <h2>Meal plans</h2>
                                 </div>
                             </div>
                             <div className="plan-grid">
@@ -106,7 +110,7 @@ function StudentDashboard({
                             <div className="section-heading">
                                 <div>
                                     <p className="eyebrow">Notifications</p>
-                                    <h2>Stay in sync</h2>
+                                    <h2>Updates</h2>
                                 </div>
                             </div>
                             <div className="notification-list">

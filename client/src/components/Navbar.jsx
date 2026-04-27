@@ -2,7 +2,7 @@ function Navbar({ onNavigate, currentPage, user, cartCount }) {
     const navItems = [
         { id: 'dashboard', label: 'Dashboard' },
         { id: 'menu', label: 'Menu' },
-        { id: 'admin', label: 'Admin' },
+        ...(user?.role === 'admin' ? [{ id: 'admin', label: 'Admin' }] : []),
     ];
 
     return (
@@ -38,6 +38,7 @@ function Navbar({ onNavigate, currentPage, user, cartCount }) {
                             <div className="topbar-user">
                                 <span className="mini-label">Signed in as</span>
                                 <strong>{user.name}</strong>
+                                <small>{user.role === 'admin' ? 'Mess Committee' : 'Student Account'}</small>
                             </div>
                             <button className="button button-secondary" onClick={() => onNavigate('logout')}>
                                 Logout

@@ -5,16 +5,13 @@ function AdminPanel({ stats, plans, weeklyMenu, feedbackItems, orders }) {
                 <section className="hero hero-admin">
                     <div className="hero-copy">
                         <p className="eyebrow">Mess Committee Console</p>
-                        <h1>Run the mess like a modern campus operation.</h1>
-                        <p className="hero-text">
-                            Track subscriptions, update menus, read feedback, and adjust prep counts
-                            before rush hour starts.
-                        </p>
+                        <h1>Run the mess with clarity.</h1>
+                        <p className="hero-text">Track plans, menus, feedback, and prep counts.</p>
                     </div>
                     <div className="admin-highlight-panel">
                         <span className="mini-label">Today</span>
                         <strong>618 lunches expected</strong>
-                        <p>58 students opted out before the 10:00 AM cutoff.</p>
+                        <p>58 opt-outs before cutoff.</p>
                     </div>
                 </section>
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
@@ -110,12 +110,16 @@ const feedbackItems = [
     { id: 3, student: 'Mitali ME-3', meal: 'Millet Idli Bowl', rating: 4, note: 'Healthy and filling. Please keep fruit daily.' },
 ];
 
+const AUTH_STORAGE_KEY = 'smartshop-auth';
+
 function App() {
     const [currentPage, setCurrentPage] = useState('login');
     const [user, setUser] = useState(null);
     const [cart, setCart] = useState([]);
     const [bookings, setBookings] = useState(mealWindows);
     const [orders, setOrders] = useState(initialOrders);
+    const [authToken, setAuthToken] = useState('');
+    const [isAuthReady, setIsAuthReady] = useState(false);
 
     const activePlan = mealPlans[1];
 
@@ -126,16 +130,60 @@ function App() {
         { label: 'Waste Saved', value: '12 plates', helper: 'From your opt-in updates' },
     ]), []);
 
-    const handleLogin = (userData) => {
-        setUser(userData);
-        setCurrentPage('dashboard');
+    useEffect(() => {
+        const restoreSession = async () => {
+            const savedAuth = window.localStorage.getItem(AUTH_STORAGE_KEY);
+
+            if (!savedAuth) {
+                setIsAuthReady(true);
+                return;
+            }
+
+            try {
+                const parsedAuth = JSON.parse(savedAuth);
+                const response = await fetch('/api/auth/me', {
+                    headers: {
+                        Authorization: `Bearer ${parsedAuth.token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Session expired');
+                }
+
+                const data = await response.json();
+                setAuthToken(parsedAuth.token);
+                setUser(data.user);
+                setCurrentPage(data.user.role === 'admin' ? 'admin' : 'dashboard');
+            } catch (error) {
+                window.localStorage.removeItem(AUTH_STORAGE_KEY);
+            } finally {
+                setIsAuthReady(true);
+            }
+        };
+
+        restoreSession();
+    }, []);
+
+    const handleAuthSuccess = ({ token, user: nextUser }) => {
+        setAuthToken(token);
+        setUser(nextUser);
+        window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ token }));
+        setCurrentPage(nextUser.role === 'admin' ? 'admin' : 'dashboard');
     };
 
     const handleNavigate = (page) => {
         if (page === 'logout') {
             setUser(null);
+            setAuthToken('');
             setCart([]);
+            window.localStorage.removeItem(AUTH_STORAGE_KEY);
             setCurrentPage('login');
+            return;
+        }
+
+        if (page === 'admin' && user?.role !== 'admin') {
+            setCurrentPage('dashboard');
             return;
         }
 
@@ -182,10 +230,27 @@ function App() {
 
     const totalCartValue = cart.reduce((sum, item) => sum + item.price, 0);
 
+    if (!isAuthReady) {
+        return (
+            <div className="app-shell">
+                <main className="app-main">
+                    <section className="page">
+                        <div className="container">
+                            <div className="auth-loading-card">
+                                <span className="mini-label">SmartShop</span>
+                                <h1>Restoring your campus session...</h1>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        );
+    }
+
     const renderPage = () => {
         switch (currentPage) {
             case 'login':
-                return <Login onLogin={handleLogin} />;
+                return <Login onAuthSuccess={handleAuthSuccess} />;
             case 'dashboard':
                 return (
                     <StudentDashboard
@@ -221,7 +286,7 @@ function App() {
                     />
                 );
             default:
-                return <Login onLogin={handleLogin} />;
+                return <Login onAuthSuccess={handleAuthSuccess} />;
         }
     };
 

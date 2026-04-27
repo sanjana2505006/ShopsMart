@@ -6,9 +6,7 @@ function MenuBoard({ menuItems, weeklyMenu, cart, totalCartValue, onAddMeal }) {
                     <div className="hero-copy">
                         <p className="eyebrow">Digital Menu Board</p>
                         <h1>Pick today&apos;s meals before the crowd does.</h1>
-                        <p className="hero-text">
-                            Browse quick bites, full thalis, and special counters, then add them to your running order in one tap.
-                        </p>
+                        <p className="hero-text">Browse, add, and check out in a few taps.</p>
                     </div>
                     <div className="cart-summary-card">
                         <span className="mini-label">Current order</span>
@@ -20,10 +18,10 @@ function MenuBoard({ menuItems, weeklyMenu, cart, totalCartValue, onAddMeal }) {
                 <section className="menu-layout">
                     <div className="panel">
                         <div className="section-heading">
-                            <div>
-                                <p className="eyebrow">Today</p>
-                                <h2>Fresh picks from the mess</h2>
-                            </div>
+                                <div>
+                                    <p className="eyebrow">Today</p>
+                                    <h2>Today&apos;s picks</h2>
+                                </div>
                         </div>
                         <div className="menu-grid">
                             {menuItems.map((item) => (
@@ -76,7 +74,7 @@ function MenuBoard({ menuItems, weeklyMenu, cart, totalCartValue, onAddMeal }) {
                             </div>
                             <div className="cart-list">
                                 {cart.length === 0 ? (
-                                    <p className="empty-state">No meals added yet. Start with today&apos;s specials.</p>
+                                    <p className="empty-state">No meals added yet.</p>
                                 ) : (
                                     cart.map((item, index) => (
                                         <div className="cart-row" key={`${item.id}-${index}`}>
