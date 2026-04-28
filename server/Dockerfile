@@ -1,12 +1,19 @@
-FROM node:20-alpine
+# Backend Dockerfile
+FROM node:18-alpine
+
 WORKDIR /app
+
+# Copy package files
 COPY package*.json ./
-RUN npm install --production
-COPY prisma ./prisma
-RUN npx prisma generate
-COPY src ./src
-ENV PORT=5001
-ENV DATABASE_URL=file:/data/smartshop.db
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy source code
+COPY . .
+
+# Expose port
 EXPOSE 5001
-RUN mkdir -p /data
-CMD ["node", "src/index.js"]
+
+# Start the server
+CMD ["npm", "start"]

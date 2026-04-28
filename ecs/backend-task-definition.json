@@ -1,0 +1,32 @@
+{
+  "family": "smartshop-backend",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::430473075115:role/LabRole",
+  "taskRoleArn": "arn:aws:iam::430473075115:role/LabRole",
+  "containerDefinitions": [
+    {
+      "name": "smartshop-backend",
+      "image": "430473075115.dkr.ecr.us-east-1.amazonaws.com/smartshop-backend:latest",
+      "essential": true,
+      "portMappings": [{ "containerPort": 5001, "hostPort": 5001, "protocol": "tcp" }],
+      "environment": [
+        { "name": "PORT", "value": "5001" },
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "DATABASE_URL", "value": "file:/data/smartshop.db" },
+        { "name": "JWT_SECRET", "value": "smartshop-prod-secret-2024" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/smartshop-backend",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
+        }
+      }
+    }
+  ]
+}
